@@ -69,7 +69,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--b);box-s
 .head-in{max-width:1280px;margin:auto;padding:10px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .h-left{display:flex;align-items:center;gap:10px}.h-logo{width:42px;height:42px;border-radius:12px;background:#fff;padding:3px;object-fit:contain}
 .h-title{font:700 18px 'Fredoka',sans-serif;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.h-sub{font-size:12px;color:#DBEAFE}
-.h-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.u-chip{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.14);padding:5px 10px;border-radius:12px}
+.h-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.u-chip{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.14);padding:5px 10px;border-radius:12px;min-height:36px}
 .nav-bar{background:#0E3466;border-top:1px solid rgba(255,255,255,.14)}.nav-in{max-width:1280px;margin:auto;padding:6px 18px;display:flex;gap:8px;overflow-x:auto}
 .nav-tab{border:0;background:transparent;color:#DBEAFE;padding:8px 14px;border-radius:10px;font:700 13.5px 'Plus Jakarta Sans',sans-serif;cursor:pointer;white-space:nowrap}.nav-tab.active{background:#fff;color:var(--bd)}
 .main{flex:1;max-width:1280px;width:100%;margin:16px auto;padding:0 16px}.tab-panel{display:none}.tab-panel.active{display:block}
@@ -150,6 +150,15 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--b);box-s
 @media screen and (min-width:1800px){:root{--z:1.4}}
 @media screen and (min-width:1800px) and (min-height:1000px){:root{--zl:1.45}}
 @media(max-width:900px){.login-wrap,.mat-lay,.q-split,.adv-grid,.two{grid-template-columns:1fr}.mat-side{position:static}}
+/* DAFTAR SUB-BAB: tombol garis tiga untuk menciutkan */
+.side-head{display:flex;align-items:center;gap:9px;margin:0 0 10px}.side-head h3{font-size:15px;color:var(--bd);margin:0}
+.side-toggle{width:38px;height:38px;flex:none;border:0;border-radius:10px;background:var(--bd);color:#fff;display:grid;place-items:center;cursor:pointer;padding:0}.side-toggle:hover{background:var(--o)}
+.mat-main{min-width:0}
+.mat-lay.ciut{grid-template-columns:72px minmax(0,1fr);gap:12px}.mat-lay.ciut .mat-side{padding:10px 7px}.mat-lay.ciut .side-head{justify-content:center}
+.mat-lay.ciut .side-head h3,.mat-lay.ciut .sub-btn .nm{display:none}.mat-lay.ciut .sub-btn{justify-content:center;padding:5px 0}.mat-lay.ciut .sub-btn .cd{min-width:42px;font-size:13px;padding:4px 6px}
+/* ubah 1.12 bila ingin materi lebih besar/kecil saat daftar diciutkan */
+@media screen and (min-width:1100px){.mat-lay.ciut .mat-main{zoom:1.12}}
+@media(max-width:900px){.mat-lay.ciut{grid-template-columns:minmax(0,1fr)}.mat-lay.ciut .side-head{justify-content:flex-start}.mat-lay.ciut #subbab-list{display:flex;flex-wrap:wrap;gap:6px}.mat-lay.ciut .sub-btn{width:auto;margin:0}}
 @media print{body{background:#fff!important}.no-print,.login-screen,.app-header,.app-footer{display:none!important}.app-shell,.main,#tab-hasil,#hasil-content{display:block!important;margin:0!important;padding:0!important;max-width:none!important}.sheets-wrap{display:block!important}.sheet{box-shadow:none!important;border:0!important;margin:0!important;width:100%!important;min-height:auto!important}}
 </style>
 </head>
@@ -257,9 +266,9 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--b);box-s
 
   <main class="main">
     <section id="tab-materi" class="tab-panel active">
-      <div class="mat-lay">
-        <aside class="mat-side"><h3 style="font-size:15px;color:var(--bd);margin:4px 6px 10px">Daftar 12 Sub-Bab</h3><div id="subbab-list"></div></aside>
-        <div>
+      <div class="mat-lay" id="mat-lay">
+        <aside class="mat-side"><div class="side-head"><button type="button" id="side-toggle" class="side-toggle" onclick="toggleSide()" aria-expanded="true" aria-label="Sembunyikan daftar sub-bab" title="Sembunyikan daftar sub-bab"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button><h3>Daftar 12 Sub-Bab</h3></div><div id="subbab-list"></div></aside>
+        <div class="mat-main">
           <div class="mat-banner"><div><span id="m-code" class="badge b-org">A.1</span><h2 id="m-title" style="color:#fff;margin:6px 0 3px">Pecahan</h2><div id="m-scope" style="font-size:13.5px;color:#DBEAFE"></div></div><img src="assets/maskot-cowok.png" alt="Maskot" class="mat-mascot" onerror="this.style.display='none'"/></div>
           <div class="card"><h3>📖 Konsep &amp; Rumus Inti</h3><div id="m-exp"></div></div>
           <div class="card"><div class="head-row"><h3>🎨 Visualisasi &amp; Simulasi Interaktif</h3><span class="badge b-blue">Bahan Mengajar Interaktif!</span></div><div id="m-vis" class="vis-box"></div></div>
@@ -690,11 +699,13 @@ async function startCam(){
 function stopCam(){if(ST.camT){clearInterval(ST.camT);ST.camT=null;}if(ST.camS){ST.camS.getTracks().forEach(t=>t.stop());ST.camS=null;}const v=$('#qr-video');if(v){v.classList.remove('live');v.srcObject=null;}}
 function uploadCardQR(e){const f=e.target.files[0];if(!f)return;$('#login-err').hidden=true;const rd=new FileReader();rd.onload=ev=>{const im=new Image();im.onload=()=>{$('#qr-up-prev').innerHTML=`<img src="${ev.target.result}" style="max-height:105px;border-radius:8px"/>`;const c=document.createElement('canvas');c.width=im.width;c.height=im.height;const ctx=c.getContext('2d');ctx.drawImage(im,0,0);const k=typeof jsQR!=='undefined'?jsQR(ctx.getImageData(0,0,c.width,c.height).data,c.width,c.height):null;if(k?.data)loginQR(k.data,$('#qr-up-st'));else $('#qr-up-st').textContent='QR tidak terbaca.';};im.src=ev.target.result;};rd.readAsDataURL(f);}
 
-function loginOK(u){ST.user=u;$('#login-err').hidden=true;$('#login-screen').hidden=true;$('#app-shell').hidden=false;const adm=u.role==='admin';$('#u-role').textContent=adm?'Admin / Pengajar':'Orangtua / Murid';$('#u-name').textContent=u.name;$('#u-id').textContent=u.id;$('#btn-admin').hidden=!adm;$('#btn-bank').hidden=!adm;$('#btn-edit-contoh').hidden=!adm;selectMateri('A.1');}
+function loginOK(u){ST.user=u;$('#login-err').hidden=true;$('#login-screen').hidden=true;$('#app-shell').hidden=false;const adm=u.role==='admin';$('#u-role').textContent=adm?'Admin / Pengajar':'Orangtua / Murid';$('#u-name').textContent=adm?'Admin Bimbel PLUS':u.name;$('#u-role').hidden=adm;$('#u-id').hidden=adm;$('#u-id').textContent=u.id;$('#btn-admin').hidden=!adm;$('#btn-bank').hidden=!adm;$('#btn-edit-contoh').hidden=!adm;selectMateri('A.1');}
 function logout(){stopCam();if(ST.qz?.tid)clearInterval(ST.qz.tid);ST.user=null;$('#app-shell').hidden=true;$('#login-screen').hidden=false;}
 function switchTab(id){if(ST.qz&&!confirm('Keluar dari pengerjaan soal saat ini?'))return;if(ST.qz){clearInterval(ST.qz.tid);ST.qz=null;}$$('.nav-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===id));$$('.tab-panel').forEach(p=>p.classList.remove('active'));$('#quiz-runner').hidden=true;$(`#tab-${id}`).classList.add('active');}
 
-function selectMateri(code){ST.bab=code;$('#subbab-list').innerHTML=MODUL.map(m=>`<button class="sub-btn ${m.c===code?'active':''}" onclick="selectMateri('${m.c}')"><span class="cd">${m.c}</span><span>${m.t}</span></button>`).join('');const m=MODUL.find(x=>x.c===code);$('#m-code').textContent=m.c;$('#m-title').textContent=m.t;$('#m-scope').textContent=m.sc;$('#m-exp').innerHTML=m.exp;$('#m-tips').innerHTML=m.tips.map(t=>`<li>${t}</li>`).join('');renderVisual(code);selectTier(ST.tier);}
+function toggleSide(paksa){const l=$('#mat-lay'),c=typeof paksa==='boolean'?paksa:!l.classList.contains('ciut'),b=$('#side-toggle'),t=c?'Tampilkan daftar sub-bab':'Sembunyikan daftar sub-bab';l.classList.toggle('ciut',c);b.setAttribute('aria-expanded',String(!c));b.setAttribute('aria-label',t);b.title=t;try{localStorage.setItem('bp_side_ciut',c?'1':'0');}catch(_){}}
+try{if(localStorage.getItem('bp_side_ciut')==='1')toggleSide(true);}catch(_){}
+function selectMateri(code){ST.bab=code;$('#subbab-list').innerHTML=MODUL.map(m=>`<button class="sub-btn ${m.c===code?'active':''}" onclick="selectMateri('${m.c}')" title="${m.t}" aria-label="${m.c} ${m.t}"><span class="cd">${m.c}</span><span class="nm">${m.t}</span></button>`).join('');const m=MODUL.find(x=>x.c===code);$('#m-code').textContent=m.c;$('#m-title').textContent=m.t;$('#m-scope').textContent=m.sc;$('#m-exp').innerHTML=m.exp;$('#m-tips').innerHTML=m.tips.map(t=>`<li>${t}</li>`).join('');renderVisual(code);selectTier(ST.tier);}
 function selectTier(t){ST.tier=t;$$('#m-tiers .chip').forEach(b=>b.classList.toggle('on',b.dataset.t===t));const m=MODUL.find(x=>x.c===ST.bab),cm=JSON.parse(localStorage.getItem('bp_custom_contoh')||'{}'),d=cm[`${m.c}_${t}`]||m.tiers[t];$('#m-tier-body').innerHTML=`<h4 style="color:var(--bd);margin:0 0 6px">${d.j}</h4><p style="margin:0"><b>Contoh Soal:</b> ${esc(d.s)}</p><div class="step-ok"><b>Cara Pengerjaan:</b><br/>${esc(d.a).replace(/\n/g,'<br/>')}</div><div class="cl" style="margin-top:8px">💡 <b>Tips Tingkat Ini:</b> ${esc(d.t)}</div>`;}
 function openEditContoh(){const m=MODUL.find(x=>x.c===ST.bab),cm=JSON.parse(localStorage.getItem('bp_custom_contoh')||'{}'),d=cm[`${m.c}_${ST.tier}`]||m.tiers[ST.tier];$('#cm-bab').textContent=`${m.c} (${m.t})`;$('#cm-tier').textContent=ST.tier.toUpperCase();$('#cm-j').value=d.j;$('#cm-s').value=d.s;$('#cm-a').value=d.a;$('#cm-t').value=d.t;$('#contoh-modal').hidden=false;}
 function saveCustomContoh(e){e.preventDefault();const key=`${ST.bab}_${ST.tier}`,cm=JSON.parse(localStorage.getItem('bp_custom_contoh')||'{}');cm[key]={j:$('#cm-j').value,s:$('#cm-s').value,a:$('#cm-a').value,t:$('#cm-t').value};localStorage.setItem('bp_custom_contoh',JSON.stringify(cm));callAPI({aksi:'simpanContohTKA',key,data:JSON.stringify(cm[key])}).catch(()=>{});closeModal('contoh-modal');selectTier(ST.tier);}
